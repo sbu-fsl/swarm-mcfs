@@ -4,11 +4,13 @@
 ## leveraging parallelism with search diversity
 ## within user-defined time-bounds and memory-limits
 
+SWARM=swarm-mcfs
+
 linux: swarm.c
-	cc -std=c99 -Wall -pedantic -o swarm swarm.c -lm
+	cc -std=c99 -Wall -pedantic -o $(SWARM) swarm.c -lm
 
 cygwin: swarm.c
-	cc -Wall -pedantic -o swarm swarm.c -lm
+	cc -Wall -pedantic -o $(SWARM) swarm.c -lm
 
 uno: swarm.c
 	uno -w swarm.c	# use uno version 2.11 or later
@@ -16,11 +18,11 @@ uno: swarm.c
 
 install_linux: linux
 	# linux:
-	sudo cp swarm /usr/local/bin
+	sudo cp $(SWARM) /usr/local/bin
 	sudo cp swarm.1 /usr/local/share/man/man1
 
 install_cygwin: cygwin
-	cp swarm.exe /bin
+	cp $(SWARM).exe /bin
 	cp swarm.1 /usr/man/man1
 
 tar:
@@ -29,4 +31,4 @@ tar:
 	rm -f swarm.html
 
 clean:
-	rm -f swarm swarm.exe swarm.o swarm.obj model.swarm
+	rm -f $(SWARM) $(SWARM).exe swarm.o swarm.obj model.swarm
