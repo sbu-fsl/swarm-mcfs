@@ -423,34 +423,35 @@ prelude(FILE *fd)
 	fprintf(fd, "then\n");
 
 	fprintf(fd, "	if [ -f %s ]\n", model_name);
-	fprintf(fd, "	then	spin %s %s -a %s\n", scommon, acommon, model_name);
-	fprintf(fd, "		if [ $? -ne 0 ] ; then exit 1; fi\n");
-	fprintf(fd, "		if [ -f pan.c ] ; then true; else echo \"error: no pan.c\"; exit 1; fi\n\n");
-	fprintf(fd, "	fi\n");
-	fprintf(fd, "	if [ -f pan.c ]\n");
+	//fprintf(fd, "	then	spin %s %s -a %s\n", scommon, acommon, model_name);
+	//fprintf(fd, "		if [ $? -ne 0 ] ; then exit 1; fi\n");
+	//fprintf(fd, "		if [ -f pan.c ] ; then true; else echo \"error: no pan.c\"; exit 1; fi\n\n");
+	//fprintf(fd, "	fi\n");
+	//fprintf(fd, "	if [ -f pan.c ]\n");
 	fprintf(fd, "	then\n");
 
 	for (i = 0, m = modes; m; m = m->nxt)
-	{	fprintf(fd, "\t\tcc ");
+	{	fprintf(fd, "\t\tmake CFLAGS='");
 		if (strstr(rcommon, "-a") == NULL)
 		{	fprintf(fd, "-DSAFETY ");
 		}
 		if (no_bitstate > 0)
-		{	fprintf(fd, " -DMEMLIM=%d %s %s -o pan%d",
+		{	
+			++i;
+			fprintf(fd, " -DMEMLIM=%d %s %s -DCONFIG_H=\\\"config%d.h\\\"' PAN=pan%d",
 				(int) (maxmem/(1024.*1024.)),
-				m->cc, ccommon, ++i);
+				m->cc, ccommon, i, i);
 		} else
-		{	fprintf(fd, " %s %s -o pan%d",
-				m->cc, ccommon, ++i);
-		}
-		if (strstr(ccommon, "pan.c") == NULL)
-		{	fprintf(fd, " pan.c");
+		{	
+			++i;
+			fprintf(fd, " %s %s -DCONFIG_H=\\\"config%d.h\\\"' PAN=pan%d",
+				m->cc, ccommon, i, i);
 		}
 		fprintf(fd, "\n");
 	}
 
 	fprintf(fd, "	else\n");
-	fprintf(fd, "		echo \"swarm: no pan.c; cannot proceed\"\n");
+	fprintf(fd, "		echo \"swarm: no %s; cannot proceed\"\n", model_name);
 	fprintf(fd, "		exit 1\n");
 	fprintf(fd, "	fi\n");
 
