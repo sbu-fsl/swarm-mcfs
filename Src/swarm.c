@@ -436,17 +436,16 @@ prelude(FILE *fd)
 		{	fprintf(fd, "-DSAFETY ");
 		}
 		if (no_bitstate > 0)
-		{	fprintf(fd, " -DMEMLIM=%d %s %s -o pan%d",
-				(int) (maxmem/(1024.*1024.)),
-				m->cc, ccommon, ++i);
-		} else
-		{	fprintf(fd, " %s %s -o pan%d",
-				m->cc, ccommon, ++i);
+		{	fprintf(fd, " -DMEMLIM=%d",
+				(int) (maxmem/(1024.*1024.)));
 		}
+		fprintf(fd, " -o pan%d",
+				++i);
+
 		if (strstr(ccommon, "pan.c") == NULL)
 		{	fprintf(fd, " pan.c");
 		}
-		fprintf(fd, "\n");
+		fprintf(fd, " %s %s\n", m->cc, ccommon);
 	}
 
 	fprintf(fd, "	else\n");
