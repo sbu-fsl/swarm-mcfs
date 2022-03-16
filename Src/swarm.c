@@ -549,7 +549,7 @@ postlude(FILE *fd)
 	for (rm = remotes; rm; rm = rm->nxt)
 	{	fprintf(fd, "\t%s)\n", rm->machine);
 		for (i = 0; i < rm->cores; i++, j++)
-		{	fprintf(fd, "\t\tsh ./${S}%d > ${S}%d.out", j, j);
+		{	fprintf(fd, "\t\tsh ./${S}%d > ${S}%d.out 2> ${S}%d.err", j, j, j);
 			if (i+1 < rm->cores)
 			{	fprintf(fd, " &");
 			}
@@ -559,7 +559,7 @@ postlude(FILE *fd)
 	}
 	fprintf(fd, "	*)\n");
 	for ( ; j < maxcpu; j++)
-	{	fprintf(fd, "\t\tsh ./${S}%d > ${S}%d.out", j, j);
+	{	fprintf(fd, "\t\tsh ./${S}%d > ${S}%d.out 2> ${S}%d.err", j, j, j);
 		if (j+1 < maxcpu)
 		{	fprintf(fd, " &");
 		}
