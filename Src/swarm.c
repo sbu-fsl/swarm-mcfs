@@ -59,6 +59,7 @@ char *acommon = "";			/* extra spin params */
 char model_name[1024];
 char script_name[1024];
 char has_rand[1024];	/* this puts a max on the nr of compilation modes */
+char mcfs_args[1024];	/* Swarm args from MCFS to specify file systems and sizes */
 
 typedef struct Mode {
 	char *cc;		/* a compilation option */
@@ -482,11 +483,11 @@ gen_runs(FILE *fd, int w, long d, long k)
 	x = (x >= max_mode) ? 1 : (x+1);	/* pan executable to use */
 
 	if (no_bitstate == max_mode)	/* all jobs are non-bitstate -- should use different next_t assumption */
-	{	fprintf(fd, "\n\techo \"./pan%d -w%d -m%ld -h%d %s\t# %.1f sec (+ %.1f s, %.1f MB)\" >> ${S}%d\n",
-			x, w, d, h, rcommon, sum_time, next_t,
+	{	fprintf(fd, "\n\techo \"./pan%d -K %d:%s -w%d -m%ld -h%d %s\t# %.1f sec (+ %.1f s, %.1f MB)\" >> ${S}%d\n",
+			x, x, mcfs_args, w, d, h, rcommon, sum_time, next_t,
 			width_mem(w)/(1024.0*1024.0), script_nr);
 	} else
-	{	fprintf(fd, "\n\techo \"./pan%d -k%ld -w%d -m%ld -h%d ", x, k, w, d, h);
+	{	fprintf(fd, "\n\techo \"./pan%d -K %d:%s -k%ld -w%d -m%ld -h%d ", x, x, mcfs_args, k, w, d, h);
 		if (has_rand[x-1] > 0)
 		{	fprintf(fd, "-RS%ld ", seed_val[just_once]);
 			just_once = (just_once + 1) % 1000; /* use each value once */
@@ -898,6 +899,10 @@ main(int argc, char *argv[])
 				break;
 
 		case 'h':	hash_factor = atof(&argv[0][2]);
+				break;
+
+		case 'K':	strcpy(mcfs_args, argv[1]);
+				argc--; argv++;
 				break;
 
 		case '1':	/* likely confusion */
